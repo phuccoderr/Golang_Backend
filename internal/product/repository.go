@@ -26,10 +26,10 @@ func (r repository) Get(id int) (*Product, error) {
 	return product, nil
 }
 
-func (r repository) List() ([]*Product, error) {
+func (r repository) List(offset int, limit int) ([]*Product, error) {
 	var products []*Product
 
-	result := r.db.Find(&products)
+	result := r.db.Offset(offset).Limit(limit).Find(&products)
 	if result.Error != nil {
 		return nil, result.Error
 	}

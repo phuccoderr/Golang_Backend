@@ -1,10 +1,10 @@
 package internal
 
 import (
-	"myproject/internal/account"
-	"myproject/internal/auth"
-	"myproject/internal/product"
-	"myproject/security"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"myproject/pkg/security"
+
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,34 +21,17 @@ func NewController(r *gin.Engine, db *gorm.DB) *Controller {
 }
 
 func (c *Controller) SetupRouter() {
+	//Swagger
+	c.route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	jwt := security.JWT{}
-
-	// Account routes
-	accountRepo := account.NewRepository(c.db)
-	accountService := account.NewService(accountRepo)
-	accountHandler := account.NewHandler(accountService)
-
-	private := c.route.Group("/auth")
-	private.Use(c.AuthRequired)
-	{
-		private.GET("/accounts", accountHandler.ListAccounts)
-		private.GET("/accounts/:id", accountHandler.GetAccount)
-	}
-
-	// Product routes
-	productRepo := product.NewRepository(c.db)
-	productService := product.NewService(productRepo)
-	productHandler := product.NewHandler(productService)
-	{
-		c.route.POST("/products", productHandler.CreateProduct)
-	}
+	router := Route{}
 
 	// Auth routes
-	authService := auth.NewService(accountRepo, jwt)
-	authHanlder := auth.NewHandler(authService)
+	router.authRoute(c, jwt)
 
-	c.route.POST("/register", authHanlder.Register)
-	c.route.POST("/login", authHanlder.Login)
+	router.accountRoute(c, c.AuthRequired)
+	router.productRoute(c, c.AuthRequired)
+	router.cartRoute(c, c.AuthRequired)
 }
 
 func (c *Controller) AuthRequired(g *gin.Context) {

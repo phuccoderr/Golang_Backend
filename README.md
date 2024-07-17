@@ -20,3 +20,9 @@ migrate create -ext sql -dir db/migration -seq init_schema
 docker exec -it postgre16 createdb --username=root --owner=root simple_bank
 docker exec -it postgre16 psql -U root simple_bank
 ```
+
+# Swagger
+- Lưu ý: Phải thêm docs !!
+~~~
+swag init -g ./cmd/server/main.go -o cmd/server/docs
+~~~

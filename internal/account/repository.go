@@ -37,11 +37,13 @@ func (r *repository) Get(id int) (*Account, error) {
 	return &account, nil
 }
 
-func (r repository) List() ([]*Account, error) {
+func (r repository) List(offset int, limit int) ([]*Account, error) {
 	var accounts []*Account
-	if err := r.db.Find(&accounts).Error; err != nil {
-		return nil, err
+	result := r.db.Offset(offset).Limit(limit).Find(&accounts)
+	if result.Error != nil {
+		return nil, result.Error
 	}
+
 	return accounts, nil
 }
 

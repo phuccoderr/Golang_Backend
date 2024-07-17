@@ -12,7 +12,7 @@ type JWT struct{}
 var jwtKey = []byte("secretadawdawdawdawdaw")
 
 type Claims struct {
-	Username string `json:"username"`
+	Username string   `json:"username"`
 	Roles    []string `json:"roles"`
 	jwt.StandardClaims
 }
@@ -23,7 +23,7 @@ func (j JWT) GenerateToken(username string) (string, error) {
 
 	claims := &Claims{
 		Username: username,
-		Roles:    []string{"adminngu"},
+		Roles:    []string{"admin"},
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -53,12 +53,10 @@ func (j JWT) ParseToken(tokenString string) (*Claims, error) {
 		return nil, errors.New("invalid token")
 	}
 
-	
-
 	return claims, nil
 }
 
-func (j JWT) AuthRoles(roles []string) error { 
+func (j JWT) AuthRoles(roles []string) error {
 	hasRole := false
 
 	for _, role := range roles {

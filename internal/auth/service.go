@@ -2,11 +2,10 @@ package auth
 
 import (
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"myproject/internal/account"
 	"myproject/model/request"
-	"myproject/security"
-
-	"golang.org/x/crypto/bcrypt"
+	"myproject/pkg/security"
 )
 
 type service struct {
